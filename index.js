@@ -1,20 +1,24 @@
+const { extractListItemsByClass, extractHrefAndHeadings } = require('./constant');
 const http = require('http');
 const https = require('https');
 const port = 3000;
 
 const server = http.createServer((req, res) => {
     if (req.url === '/getTimeStories' && req.method === 'GET') {
-        https.get('https://mocki.io/v1/33a55736-96c0-4b6e-94f9-04bfc8d54166', (response) => {
+        https.get('https://time.com/', (response) => {
             let data = '';
 
-            response.on('data', (chunk) => {                
+            response.on('data', (chunk) => {
                 data += chunk;
-            }); 
+            });
 
             response.on('end', () => {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(data);
+                const latestStories = extractListItemsByClass(data, "latest-stories__item")
+                const eachLatestStory = extractHrefAndHeadings(latestStories);
+                res.end(JSON.stringify(eachLatestStory));
             });
+
         }).on('error', (error) => {
             res.writeHead(500, { 'Content-Type': 'text/plain' });
             res.end('Error fetching data');
@@ -25,8 +29,8 @@ const server = http.createServer((req, res) => {
     }
 });
 
-
-
 server.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
+
+
