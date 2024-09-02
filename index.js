@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
 
             response.on('end', () => {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                const latestStories = extractListItemsByClass(data, "latest-stories__item")
+                const latestStories = extractListItemsByClass(data)
                 const eachLatestStory = extractHrefAndHeadings(latestStories);
                 res.end(JSON.stringify(eachLatestStory));
             });
